@@ -8,6 +8,9 @@ import StudySessionsPage from './pages/StudySessionsPage';
 import InsightsPage from './pages/InsightsPage'; // make sure this file exists
 import ChallengesPage from "./pages/ChallengesPage";
 import CourseCreatePage from './pages/CourseCreatePage';
+import AIDoubtSolverPage from './pages/AIDoubtSolverPage';
+import AiHistory from "./pages/AiHistory";
+
 function App() {
   return (
     <Router>
@@ -22,7 +25,7 @@ function App() {
           <Link to="/create-course" className="text-blue-600 hover:underline">CREATE COURSE</Link>
           <Link to="/insights" className="text-blue-600 hover:underline">INSIGHTS</Link>
           <Link to="/challenges" className="text-blue-600 hover:underline">CHALLENGES</Link>
-         
+          <Link to="/ai-solver" className="hover:underline">AI Doubt Solver</Link>
         </nav>
 
         {/* Routes */}
@@ -35,6 +38,8 @@ function App() {
           <Route path="/create-course" element={<CourseCreatePage />} />
           <Route path="/insights" element={<InsightsPage />} />
           <Route path="/challenges" element={<ChallengesPage />} />
+          <Route path="/ai-solver" element={<AIDoubtSolverPage />} />
+          <Route path="/ai-history" element={<AiHistory />} />
         </Routes>
       </div>
     </Router>

@@ -1,9 +1,9 @@
-// src/main/java/com/cerebro/service/StudySessionService.java
 package com.cerebro.service;
 
 import com.cerebro.dto.DailyStudySummary;
 import com.cerebro.model.StudySession;
 import com.cerebro.repository.StudySessionRepository;
+import com.cerebro.repository.TopicRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,18 +19,20 @@ import java.util.Map;
 public class StudySessionService {
 
     private static final Logger log = LoggerFactory.getLogger(StudySessionService.class);
-    // Temporary stand-in until user management is added:
     private static final long DUMMY_USER_ID = 1L;
 
     private final StudySessionRepository repo;
     private final ChallengeService challengeService;
+    private final TopicRepository topicRepository;
 
     public StudySessionService(
             StudySessionRepository repo,
-            ChallengeService challengeService
+            ChallengeService challengeService,
+            TopicRepository topicRepository
     ) {
         this.repo = repo;
         this.challengeService = challengeService;
+        this.topicRepository = topicRepository;
     }
 
     public StudySession createSession(StudySession session) {
@@ -42,7 +44,6 @@ public class StudySessionService {
         }
         StudySession saved = repo.save(session);
 
-        // Update any HOURS or SESSION_COUNT challenges
         if (saved.getDurationInMinutes() != null) {
             challengeService.updateProgressFromSession(saved.getDurationInMinutes(), DUMMY_USER_ID);
         }
@@ -62,7 +63,6 @@ public class StudySessionService {
         repo.deleteById(id);
     }
 
-    /** Daily summary: return only days that have >0 minutes recorded */
     public List<DailyStudySummary> getDailySummary() {
         var raw = repo.getRawDailySummary();
         List<DailyStudySummary> out = new ArrayList<>();
@@ -78,7 +78,6 @@ public class StudySessionService {
         return out;
     }
 
-    /** Weekly summary for current week */
     public Map<String, Integer> getWeeklySummary() {
         ZoneId zone = ZoneId.systemDefault();
         LocalDate today = LocalDate.now(zone);
@@ -106,7 +105,6 @@ public class StudySessionService {
         return result;
     }
 
-    /** Calculate and return current streak (consecutive days) */
     public int getCurrentStreak() {
         List<java.sql.Date> rawDates =
             repo.findDistinctStudyDatesOrderedDesc();
@@ -130,7 +128,6 @@ public class StudySessionService {
 
         log.info("🔥 Calculated streak = {} days", streak);
 
-        // Update STREAK-type challenges
         challengeService.updateProgressFromStreak(streak, DUMMY_USER_ID);
 
         return streak;
@@ -154,5 +151,16 @@ public class StudySessionService {
         return getSessionsByTopicId(topicId).stream()
                     .mapToLong(StudySession::getDurationInMinutes)
                     .sum();
+    }
+
+    /** New method to get course completion percentage */
+    public double getCourseCompletion(Long courseId) {
+        long totalTopics = topicRepository.countByCourseId(courseId);
+        long completedTopics = topicRepository.countByCourseIdAndCompletedTrue(courseId);
+    
+        if (totalTopics == 0) {
+            return 0.0;
+        }
+        return (double) completedTopics / totalTopics;
     }
 }

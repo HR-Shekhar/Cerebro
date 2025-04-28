@@ -5,11 +5,13 @@ import com.cerebro.model.Course;
 import com.cerebro.repository.TopicRepository;
 import com.cerebro.repository.CourseRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class TopicService {
 
     private final TopicRepository topicRepo;

@@ -4,11 +4,14 @@ import com.cerebro.dto.DailyStudySummary;
 import com.cerebro.model.StudySession;
 import com.cerebro.service.InsightsService;
 import com.cerebro.service.StudySessionService;
+import com.cerebro.service.TopicService;
+import com.cerebro.repository.TopicRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import com.cerebro.model.Topic;
 
 import java.util.List;
 import java.util.Map;
@@ -20,10 +23,14 @@ public class StudySessionController {
     private static final Logger log = LoggerFactory.getLogger(StudySessionController.class);
     private final StudySessionService service;
     private final InsightsService insightsService;
+    private final TopicService topicService;
+    private final TopicRepository topicRepo;
 
-    public StudySessionController(StudySessionService service, InsightsService insightsService) {
+    public StudySessionController(StudySessionService service, InsightsService insightsService, TopicService topicService, TopicRepository topicRepo) {
         this.service = service;
         this.insightsService = insightsService;
+        this.topicService = topicService;
+        this.topicRepo = topicRepo;
     }
 
     @PostMapping
@@ -93,5 +100,16 @@ public class StudySessionController {
     @GetMapping("/insights/completion")
     public ResponseEntity<Map<String, Double>> getCourseCompletionInsights() {
         return ResponseEntity.ok(insightsService.getCourseCompletionPercentages());
+    }
+    @GetMapping("/insights/completion/{courseId}")
+    public double getCourseCompletion(@PathVariable Long courseId) {
+        // Fetch all topics related to the course
+        List<Topic> topics = topicRepo.findByCourseId(courseId);
+        
+        // Count completed topics
+        long completedCount = topics.stream().filter(Topic::isCompleted).count();
+        
+        // Calculate completion percentage
+        return (double) completedCount / topics.size();
     }
 }

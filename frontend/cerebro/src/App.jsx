@@ -11,7 +11,7 @@ import { Toaster } from 'react-hot-toast'; // already imported ✅
 import LandingPage       from './pages/LandingPage';
 import HomePage          from './pages/HomePage';
 import DashboardLayout   from './layouts/DashboardLayout';
-
+import PopularCourses from './pages/PopularCourses';
 import CoursePage        from './pages/CoursePage';
 import CourseCreatePage  from './pages/CourseCreatePage';
 import NotesPage         from './pages/NotesPage';
@@ -53,6 +53,7 @@ export default function App() {
           <Route path="challenges"        element={<ChallengesPage />} />
           <Route path="ai-solver"         element={<AIDoubtSolverPage />} />
           <Route path="ai-history"        element={<AiHistory />} />
+          <Route path="popularCourses"    element={<PopularCourses />} />
         </Route>
 
         {/* 4) Catch-all 404 */}

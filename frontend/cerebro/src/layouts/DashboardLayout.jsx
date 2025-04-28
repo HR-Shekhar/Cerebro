@@ -13,6 +13,7 @@ import {
   FaBullseye,
   FaRobot,
   FaHistory,
+  FaStar,
 } from 'react-icons/fa';
 
 const menuItems = [
@@ -25,6 +26,7 @@ const menuItems = [
   { to: 'insights',      label: 'Insights',       icon: <FaChartBar /> },
   { to: 'challenges',    label: 'Challenges',     icon: <FaBullseye /> },
   { to: 'ai-solver',     label: 'AI Solver',      icon: <FaRobot /> },
+  { to: 'popularCourses',     label: 'Popular Courses',      icon: <FaStar /> },
   // { to: 'ai-history',    label: 'AI History',     icon: <FaHistory /> },
 ];
 

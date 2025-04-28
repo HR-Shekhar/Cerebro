@@ -402,33 +402,45 @@ export default function FlashcardsPage() {
             </div>
 
             <div className="bg-white dark:bg-gray-700 rounded-xl shadow-xl p-8 max-w-2xl mx-auto transition-colors">
-
               <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-6">
-
                 <span>Card {currentStudyIndex + 1} of {filteredCards.length}</span>
-
-                <span>Topic: {filteredCards[currentStudyIndex].topic}</span>
-
+                <div className="flex items-center space-x-3">
+                  <span>Topic: {filteredCards[currentStudyIndex].topic}</span>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setStudyMode(false);
+                        handleEditClick(filteredCards[currentStudyIndex], { stopPropagation: () => {} });
+                      }}
+                      className="p-1.5 text-yellow-600 dark:text-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/30 rounded-full transition"
+                      title="Edit"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(filteredCards[currentStudyIndex].id, e);
+                      }}
+                      className="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-full transition"
+                      title="Delete"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <div className="min-h-48 mb-8">
-
                 <h3 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-4">Question:</h3>
-
                 <p className="text-lg text-gray-900 dark:text-gray-100">{filteredCards[currentStudyIndex].question}</p>
-
                 {showAnswer && (
-
                   <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-600">
-
                     <h3 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-4">Answer:</h3>
-
                     <p className="text-lg text-gray-900 dark:text-gray-100">{filteredCards[currentStudyIndex].answer}</p>
-
                   </div>
-
                 )}
-
               </div>
 
               <div className="flex justify-between">

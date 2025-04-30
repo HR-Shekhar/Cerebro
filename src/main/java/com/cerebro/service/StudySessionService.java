@@ -89,12 +89,13 @@ public class StudySessionService {
         }
 
         LocalDateTime weekStart = monday.atStartOfDay();
+        Instant weekStartInstant = weekStart.atZone(ZoneId.systemDefault()).toInstant();
         List<StudySession> sessions = repo.findAll().stream()
-            .filter(s -> s.getStartTime() != null && !s.getStartTime().isBefore(weekStart))
+            .filter(s -> s.getStartTime() != null && !s.getStartTime().isBefore(weekStartInstant))
             .toList();
 
         for (StudySession s : sessions) {
-            DayOfWeek dow = s.getStartTime().getDayOfWeek();
+            DayOfWeek dow = s.getStartTime().atZone(ZoneId.systemDefault()).getDayOfWeek();
             temp.put(dow, temp.get(dow) + s.getDurationInMinutes().intValue());
         }
 

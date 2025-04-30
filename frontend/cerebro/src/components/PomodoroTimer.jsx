@@ -12,9 +12,9 @@ export default function PomodoroTimer({
 }) {
   // 1) Presets (work min / break min)
   const presets = [
-    { label: '25 / 5',  work: 25, break: 5  },
-    { label: '50 / 10', work: 50, break: 10 },
-    { label: '100 / 20', work:100, break: 20 }
+    { label: '25 / 5',  work: 25, break: 5  },
+    { label: '50 / 10', work: 50, break: 10 },
+    { label: '100 / 20', work:100, break: 20 }
   ];
 
   // 2) State
@@ -76,26 +76,32 @@ export default function PomodoroTimer({
   // 8) Stop—record work sessions only
   const handleStop = async () => {
     setIsRunning(false);
-
+  
     // only record if it was a work session
     if (mode === 'work' && startTime && courseId && topicId) {
       const end = new Date();
-      try {
-        await axios.post('http://localhost:8080/api/sessions', {
-          startTime: startTime.toISOString(),
-          endTime:   end.toISOString(),
-          course:    { id: courseId },
-          topic:     { id: topicId },
-          durationInMinutes: Math.ceil(((presets[presetIndex].work * 60) - (minutes*60 + seconds)) / 60)
-        });
-        toast.success('✅ Session recorded');
-        onSessionRecorded();
-      } catch (e) {
-        console.error(e);
-        toast.error('❌ Recording failed');
+      const durationInMs = end - startTime;
+      const durationInMinutes = Math.floor(durationInMs / 60000);
+  
+      if (durationInMinutes >= 1) {
+        try {
+          await axios.post('http://localhost:8080/api/sessions', {
+            startTime: startTime.toISOString(),
+            endTime:   end.toISOString(),
+            course:    { id: courseId },
+            topic:     { id: topicId }
+          });
+          toast.success('✅ Session recorded');
+          onSessionRecorded();
+        } catch (e) {
+          console.error(e);
+          toast.error('❌ Recording failed');
+        }
+      } else {
+        toast('⚠️ Session too short to record');
       }
     }
-
+  
     // decide next mode & duration
     let nextMode, nextMin;
     if (mode === 'work') {
@@ -107,12 +113,13 @@ export default function PomodoroTimer({
       nextMode = 'work';
       nextMin  = presets[presetIndex].work;
     }
-
+  
     setMode(nextMode);
     setMinutes(nextMin);
     setSeconds(0);
     setStartTime(null);
   };
+  
 
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md w-full max-w-sm mx-auto">

@@ -12,7 +12,7 @@ export default function AiDoubtSolver() {
   const [charCount, setCharCount] = useState(0);
   const answerRef = useRef(null);
   const textareaRef = useRef(null);
-  const GEMINI_KEY = "Your_api_key";
+  const GEMINI_KEY = "AIzaSyAxTyBL6ZN1DT6LoxfUi9iW9jw39WS9724";
 
   useEffect(() => {
     setCharCount(prompt.length);
